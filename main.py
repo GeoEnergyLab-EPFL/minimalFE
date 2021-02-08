@@ -95,4 +95,3 @@ plt.show()
 fig, ax = plt.subplots()
 ax.plot(np.arange(nelts+1), coor)
 plt.show()
-
