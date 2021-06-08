@@ -7,15 +7,14 @@
 #
 
 import numpy as np
-from numba import jit
 
+# Unstructured mesh class - minimal
+# dependencies: meshio package (pip install meshio)
 
-class minimesh :
+class usmesh :
     """" A basic and minimal mesh class """
 
     def __init__(self,dimension,coor,conn,order):
-
-#     need to write checks
         assert type(dimension) is int, "dimension is not an integer "
         assert type(coor) is np.ndarray, "given coordinates is not a numpy array"
         assert type(conn) is np.ndarray, "given connectivity is not a numpy array "
@@ -25,16 +24,13 @@ class minimesh :
         self.coor = coor
         self.conn = conn
         self.order = order
-
         self.nelts = conn.shape[0]
         self.nnodes = coor.shape[0]
-        self.matid = np.ones(self.nelts)
-        self.nmat =np.unique(self.matid).size
 
-    def set_matid(self,matid):
-# matid is a vector of length equal to the number of element
-# with the integer id of all the element in the mesh - ordered from elt 1 to nelts
-        assert type(matid) is np.ndarray," given matid is not a numpy array"
-        assert matid.size == self.nelts, "given matid length do not match the number of elts in the mesh"
-        self.matid = matid
-        self.nmat=np.unique(matid).size
+    @classmethod
+    def fromMeshio(cls,meshio,order):
+        # for now we only accept mesh made  of a single type of element
+        lk=list(meshio.cells_dict.keys())
+        assert len(lk)==1
+        return cls(meshio.points.shape[1],meshio.points,meshio.cells_dict[lk[0]],order)
+
