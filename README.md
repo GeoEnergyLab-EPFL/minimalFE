@@ -13,13 +13,14 @@ Authors:
 - 2D linear triangle for Laplacian, and diffusion (see benchmark/flow/2DDiffusion.py)
 - 1D linear segment for Laplacian, and diffusion (benchmark not yet finalized)
 
+----
+## dependencies
+- meshio  
+- numba 
 
 ------
 TO DO
 
-- Mesh : methods to get local coordinates system for surface elements
--      SurfaceMesh as a sub-class ? 
-- Assemble : specific for surface meshes... 
-- 
-- Block conjugate Solver with clean API
-- Newton API 
+- verification 1D diffusion 
+- extension to double-node interface elements for fracture with longitudinal and transverse perm.
+- ...
