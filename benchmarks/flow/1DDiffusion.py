@@ -14,6 +14,10 @@ import numpy as np
 import numba
 import time,sys
 
+
+import matplotlib
+import matplotlib.pyplot as plt
+
 from mesh.usmesh import usmesh
 from mesh.mesh_utils import *
 from fe.SEG2_Element import *
@@ -62,3 +66,55 @@ t = time.process_time()
 myM=assemble(me,massMatrix,matid,np.array([properties["Storage"]]),project_segment_elt)
 elapsed_time = time.process_time() - t
 print(elapsed_time)
+
+
+
+# find nodes at mesh center
+ij = np.where(me.coor[:,0]==0.)[0][0] # anyway there is a
+
+
+# we impose the constant pressure by adding a large number to the matrix entry
+Mlarge=1.0e10
+# inj pressure
+Pinj=1.0
+### CONTANT TIME STEEPING SOLUTION
+dt = 0.02
+myK = myM + dt * myC
+myK[ij,ij]+=Mlarge
+luK = splu(myK)  # splu decomposition needs a csc format
+
+p0 = np.zeros(me.nnodes, dtype=float)
+p0[ij]=Pinj
+pn = p0.copy()
+tt = 0.
+k = 0
+q0 = np.asarray([0.])
+times = np.asarray([0.])
+
+while k < 2000:
+    k = k + 1
+    tt = tt + dt
+    times = np.append(times, [tt])
+    ft = dt * np.asarray(-(myC @ pn) )
+    dp = luK.solve(ft)
+    pn = pn + dp
+
+
+# compute the radial coordinates of the mesh nodes.
+x=me.coor[:,0]
+
+# plots and checks
+
+#x=np.linspace(0.0, 10.0, num=300)
+sol=pressure(x,tt,Pinj)
+
+fig, ax = plt.subplots()
+ax.plot(x, sol)
+ax.plot(x, pn,'.')
+plt.show()
+
+abs_err = np.abs(pn-sol)
+
+fig, ax = plt.subplots()
+ax.semilogy(x, abs_err,'.')
+plt.show()
