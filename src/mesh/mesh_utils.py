@@ -44,7 +44,7 @@ def surface_elt_local(xae3D):
 
 @jit(nopython=True)
 def project_segment_elt(xae2D):
-    # this function projects the coordinates of a 3D planar surface element (i.e. a triangle) into its plane
+    # this function projects the coordinates of a 2D planar surface element  into its 1D plane
     # and return
     R = segment_elt_local(xae2D)
     xae_proj=xae2D-xae2D[0]
