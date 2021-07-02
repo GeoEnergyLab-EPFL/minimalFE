@@ -18,17 +18,6 @@ def jacobian(xae):
     DxDxi =DNaDxi@xae
     return DxDxi
 
-@jit(nopython=True,signature_or_function='float64[:,:](float64[:],float64)')
-def conductivityMatrix2(xae,cond):
-    # DNaDxi = np.array([-0.5 , 0.5])
-    # DxDxi =DNaDxi@xae
-    j=jacobian(xae)
-    # order 1 element - constant gradient - single gauss point
-    # assuming isotropy
-    #Celt = 2.0*(np.transpose(DNaDxi)@DNaDxi) / jacobian
-    Celt = cond *np.array([[0.5,-0.5],[-0.5,0.5]])/ j
-    return Celt
-
 
 @jit(nopython=True,signature_or_function='float64[:,:](float64[:],float64)')
 def conductivityMatrix(xae,cond):
